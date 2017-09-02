@@ -21,7 +21,7 @@ class Column extends Component {
         return (
             <div className="column">
                 <DragHandle/>
-                <Input name="name" type="text" value={column.name} onChange={onChange}/>
+                <input name="name" type="text" value={column.name} onChange={onChange}/>
                 <select name="type" value={column.type} onChange={onChange}>
                     <option value="ID">ID</option>
                     <option value="First Name">First Name</option>

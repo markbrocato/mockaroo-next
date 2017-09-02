@@ -10,6 +10,7 @@ export default class App extends Component {
     
     mainStore = new MainStore({
         schema: new SchemaModel({
+            name: 'My Schema',
             columns: [
                 new ColumnModel({
                     name: 'id',
