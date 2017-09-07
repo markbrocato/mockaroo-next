@@ -7,8 +7,16 @@ export default function withBinding(modelProp, Target) {
             return <Target {...this.props} onChange={this.onChange}/>
         }
 
-        onChange = ({ target: field }) => {
-            this.props[modelProp][field.getAttribute('name')] = field.value;
+        onChange = ({ name, target: field }) => {
+            name = name || field.getAttribute('name');
+            const props = this.props;
+            const model = props[modelProp];
+
+            if (field.hasOwnProperty('checked')) {
+                model[name] = field.checked;
+            } else {
+                model[name] = field.value;
+            }
         }
     }
 

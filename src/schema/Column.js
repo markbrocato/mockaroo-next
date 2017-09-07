@@ -1,13 +1,20 @@
-import React, { Component } from 'react';
-import { func } from 'prop-types';
-import { observer } from 'mobx-react';
-import withBinding from '../hoc/withBinding';
-import { SortableElement, SortableHandle } from 'react-sortable-hoc';
-import './Column.less';
-import Input from 'react-toolbox/lib/input'
+import React, { Component } from 'react'
+import { func } from 'prop-types'
+import { observer, inject } from 'mobx-react'
+import withBinding from '../hoc/withBinding'
+import { SortableElement, SortableHandle } from 'react-sortable-hoc'
+import './Column.less'
+import { TextField, IconButton, InputLabel, Button } from 'material-ui'
+import Container from '../Container'
+import { Close } from 'material-ui-icons'
+import AdvancedFormulaDialog from './AdvancedFormulaDialog'
+import TypeField from './TypeField'
 
-const DragHandle = SortableHandle(() => <span>::</span>);
+const DragHandle = SortableHandle(() => (
+    <div className="drag-handle"/>
+))
 
+@inject(({ mainStore }) => ({ schema: mainStore.schema }))
 @observer
 class Column extends Component {
 
@@ -15,27 +22,76 @@ class Column extends Component {
         onRemoveClick: func
     }
 
+    state = {
+        advancedFormulaOpen: false
+    }
+
     render() {
-        const { column, onChange, onRemoveClick, index } = this.props;
+        const { column, onChange } = this.props
 
         return (
-            <div className="column">
-                <DragHandle/>
-                <input name="name" type="text" value={column.name} onChange={onChange}/>
-                <select name="type" value={column.type} onChange={onChange}>
-                    <option value="ID">ID</option>
-                    <option value="First Name">First Name</option>
-                    <option value="Last Name">Last Name</option>
-                    <option value="Email">Email</option>
-                    <option value="Gender">Gender</option>
-                </select>
-                <div className="remove" onClick={onRemoveClick}>&times;</div>
-            </div>
+            <Container className="column">
+                <Container className="name-column">
+                    <DragHandle/>
+                    <TextField 
+                        inputRef={this.nameRef} 
+                        name="name" 
+                        type="text" 
+                        value={column.name || ''} 
+                        onChange={onChange} 
+                        style={{ flex: 1 }}
+                        className="code"
+                    />
+                </Container>
+                <Container className="type-column">
+                    <TypeField value={column.type}/>
+                </Container>
+                <Container className="options-column">
+                    {/* <TextField style={{ flex: 1 }} placeholder="formula"/> */}
+                    <InputLabel className="label">Blank:</InputLabel>
+                    <TextField name="percentBlank" onChange={onChange} value={column.percentBlank} style={{ width: '40px' }}/> 
+                    <InputLabel className="label">%</InputLabel>
+                    <Button 
+                        color={column.advancedFormula ? 'primary' : 'default'} 
+                        fab
+                        className={`action-button advanced-formula-button${column.advancedFormula ? '-primary' : ''}`} 
+                        onClick={this.openAdvancedFormulaDialog}
+                        dense
+                        style={{ marginLeft: '10px' }}
+                    >
+                        <span/>
+                    </Button>
+                    <IconButton className="action-button" onClick={this.onRemoveClick}><Close/></IconButton>
+                </Container>
+                <AdvancedFormulaDialog 
+                    open={this.state.advancedFormulaOpen} 
+                    onRequestClose={this.closeAdvancedFormulaDialog}
+                    onRequestApply={this.applyAdvancedFormula}
+                    value={column.advancedFormula}
+                />
+            </Container>
         )
+
+    }
+
+    openAdvancedFormulaDialog = () => this.setState({ advancedFormulaOpen: true })
+    closeAdvancedFormulaDialog = () => this.setState({ advancedFormulaOpen: false })
+    onRemoveClick = () => this.props.schema.removeColumn(this.props.column)
+    
+    nameRef = (name) => {
+        if (name && this.props.autoFocus) {
+            name.focus()
+            name.select()
+        }
+    }
+    
+    applyAdvancedFormula = (advancedFormula) => {
+        this.setState({ advancedFormulaOpen: false })
+        this.props.column.advancedFormula = advancedFormula
     }
 
 }   
 
-// export default Column;
-export default SortableElement(withBinding('column', Column));
+// export default Column
+export default SortableElement(withBinding('column', Column))
 
