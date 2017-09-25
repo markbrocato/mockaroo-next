@@ -7,4 +7,12 @@ export default class ColumnModel extends Model {
     @observable destroyed = false
     @observable percentBlank = 0
     @observable advancedFormula = null
+
+    // number
+    @observable min = 0
+    @observable max = 100
+    @observable decimals = 0
+    
+    // formula
+    @observable formula = null
 }

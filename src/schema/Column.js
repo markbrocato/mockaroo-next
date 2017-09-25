@@ -9,6 +9,8 @@ import Container from '../Container'
 import { Close } from 'material-ui-icons'
 import AdvancedFormulaDialog from './AdvancedFormulaDialog'
 import TypeField from './TypeField'
+import columns from './columns'
+import NumberField from '../components/NumberField'
 
 const DragHandle = SortableHandle(() => (
     <div className="drag-handle"/>
@@ -28,6 +30,7 @@ class Column extends Component {
 
     render() {
         const { column, onChange } = this.props
+        const OptionsComponent = columns[column.type.name]
 
         return (
             <Container className="column">
@@ -47,9 +50,14 @@ class Column extends Component {
                     <TypeField value={column.type}/>
                 </Container>
                 <Container className="options-column">
-                    {/* <TextField style={{ flex: 1 }} placeholder="formula"/> */}
+                    { OptionsComponent && <OptionsComponent column={column}/> }
                     <InputLabel className="label">Blank:</InputLabel>
-                    <TextField name="percentBlank" onChange={onChange} value={column.percentBlank} style={{ width: '40px' }}/> 
+                    <NumberField
+                        name="percentBlank" 
+                        onChange={onChange} 
+                        value={column.percentBlank} 
+                        double
+                    /> 
                     <InputLabel className="label">%</InputLabel>
                     <Button 
                         color={column.advancedFormula ? 'primary' : 'default'} 

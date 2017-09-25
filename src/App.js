@@ -67,7 +67,18 @@ export default class App extends Component {
                 new ColumnModel({
                     name: 'gender',
                     type: { id: 5, name: 'Gender' }
-                })
+                }),
+                new ColumnModel({
+                    name: 'age',
+                    type: { id: 6, name: 'Number' },
+                    min: 0,
+                    max: 100,
+                    decimals: 0
+                }),
+                new ColumnModel({
+                    name: 'rank',
+                    type: { id: 7, name: 'Formula' }
+                }),
             ]
         })
     })
